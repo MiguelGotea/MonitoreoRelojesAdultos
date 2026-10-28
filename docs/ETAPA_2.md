@@ -1,23 +1,38 @@
-# Etapa 2 — Servicio privado en VPS
+# Etapa 2 — Panel web centralizado
 
-## Implementado
+Estado: **completada** el 2026-10-28 (America/Managua).
 
-- Proceso PM2 aislado en `/root/monitoreo-relojes-adultos`.
-- Panel HTTP interno en `127.0.0.1:3108` con autenticación Basic propia.
-- Sincronización manual y automática cada cinco minutos.
-- Persistencia local en `data/store.json`, con permisos de propietario.
-- Conectores independientes por cuenta para que ambos relojes se unifiquen en una misma vista.
-- Solo operaciones SOAP de lectura: `Login` y `GetTracking`.
+## Servicio desplegado
 
-## Contrato validado
+- Directorio aislado: `/root/monitoreo-relojes-adultos`.
+- Proceso PM2: `monitoreo-relojes-adultos`.
+- Puerto público dedicado: `3108/tcp`, autorizado en UFW.
+- Acceso: `http://IP_DEL_VPS:3108/`.
+- Actualización: cada cinco minutos y bajo demanda desde el panel.
+- Persistencia privada: `data/store.json` en el VPS.
 
-AnyTracking 5.2.99 utiliza SOAP 1.1 contra `openapiv3.asmx`. El acceso de usuario emplea `LoginType=1`. Un inicio de sesión válido devuelve la lista de dispositivos y una clave de contexto por dispositivo; esa clave es necesaria para que `GetTracking` entregue la posición actual. La integración obtiene la clave en memoria para cada ciclo y no la almacena en Git ni en el panel.
+El servicio se despliega con cada `push` a `main` mediante GitHub Actions. El flujo de publicación local está en `.scripts/gitpush.ps1`.
 
-`GetTracking` confirmó campos de estado, hora de posición, latitud, longitud, velocidad, rumbo, estado de movimiento/GPS y temperatura. La normalización conserva únicamente los campos que el panel pueda presentar sin modificar el reloj.
+## Funcionalidad entregada
 
-## Operación segura
+- Inicio de sesión independiente para cada una de las dos cuentas del proveedor.
+- Consolidación de los relojes disponibles en un único panel.
+- Consulta de solo lectura mediante `Login` y `GetTracking`.
+- Visualización de última actualización, estado, dirección, batería, temperatura reportada, velocidad y coordenadas cuando el proveedor las entrega.
+- Actualización manual protegida y actualización periódica.
+- Panel protegido con autenticación Basic propia; las credenciales del proveedor no se muestran al usuario.
 
-1. Mantener el proceso escuchando solo en `127.0.0.1`.
-2. Publicarlo únicamente mediante un reverse proxy HTTPS con autenticación adicional, si se requiere acceso externo.
-3. No habilitar `SendCommandByAPP` ni ningún método que modifique el reloj.
-4. Tratar temperatura y cualquier valor de salud como telemetría de consumo, no como diagnóstico.
+## Configuración privada
+
+El archivo `/root/monitoreo-relojes-adultos/.env` contiene el usuario y clave del panel, además de las credenciales de las dos cuentas. Tiene permisos privados y está excluido de Git. Nunca debe copiarse al repositorio, documentación, capturas ni mensajes.
+
+## Seguridad y límites operativos
+
+- El servicio no ejecuta comandos remotos sobre los relojes.
+- La telemetría de salud es informativa y no constituye diagnóstico médico.
+- El panel se publica actualmente por HTTP para replicar el patrón de la herramienta de referencia. Antes de compartirlo fuera del grupo autorizado se debe configurar un dominio, certificado TLS y HTTPS.
+- El endpoint `/healthz` es público y únicamente devuelve el estado técnico del servicio; el panel y sus datos requieren autenticación.
+
+## Trabajo futuro
+
+La etapa 3 (aplicación para reloj) queda aplazada. Cualquier ampliación futura de salud, historial, alertas avanzadas, mapa y HTTPS deberá planificarse como una etapa independiente, sin habilitar comandos del proveedor por defecto.

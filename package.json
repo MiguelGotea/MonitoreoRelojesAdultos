@@ -4,8 +4,7 @@
   "private": true,
   "description": "Panel privado para centralizar el monitoreo de relojes de adultos mayores.",
   "scripts": {
-    "start": "node server.js",
-    "test": "node --test"
+    "start": "node server.js"
   },
   "engines": {
     "node": ">=20.0.0"

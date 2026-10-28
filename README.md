@@ -16,19 +16,15 @@ El primer deploy crea `/root/monitoreo-relojes-adultos/.env` con permisos privad
 
 Desde la raíz del proyecto, usa `\.scripts\gitpush.ps1 "mensaje del cambio"`. El script sincroniza `main`, resuelve el flujo de conflicto igual que `Herramientas_Personales` y hace el `push` que activa el despliegue. Si detecta valores que parecen secretos en `.env.example`, excluye solo ese archivo del commit y continúa; el archivo `.env` real ya está ignorado por Git.
 
-## Etapas
+## Estado del proyecto
 
-1. **Validación de acceso y datos** — documentar el proveedor, la autenticación, las solicitudes de la aplicación y los datos realmente disponibles.
-2. **Servicio web propio** — integrar ambos relojes en un panel web alojado en un VPS, con histórico e indicadores.
-3. **Aplicación para reloj** — diseñar una experiencia de seguimiento resumida para watchOS/Wear OS según el dispositivo de destino.
-
-## Estado de la etapa 1
-
-Se creó el inventario inicial en [docs/FASE_1.md](docs/FASE_1.md). Aún no hay integración ni credenciales guardadas en este repositorio.
+1. **Etapa 1 — Validación:** completada. Se confirmó el proveedor, el contrato de lectura y los datos de ubicación disponibles. Ver [FASE_1.md](docs/FASE_1.md).
+2. **Etapa 2 — Servicio web:** completada. Ambos relojes se centralizan mediante cuentas independientes y se muestran en un panel protegido desplegado en el VPS. Ver [ETAPA_2.md](docs/ETAPA_2.md).
+3. **Etapa 3 — Aplicación para reloj:** queda aplazada como trabajo futuro. Se evaluará por separado cuando se definan plataforma, alcance y requisitos de seguridad.
 
 ## Seguridad
 
 - Las credenciales, teléfonos, IMEI, enlaces con tokens, cookies y ubicaciones precisas no se deben incluir en el código, documentación versionada ni capturas compartidas.
-- Al implementar la etapa 2 se usarán variables de entorno y un gestor de secretos del VPS.
-- El acceso al panel propio deberá requerir autenticación y HTTPS.
+- Las variables de entorno reales permanecen exclusivamente en el VPS.
+- El panel requiere autenticación. Actualmente se publica por HTTP en un puerto dedicado; antes de ampliar su uso debe migrarse a un dominio con HTTPS.
 
