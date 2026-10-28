@@ -4,7 +4,7 @@ Proyecto por etapas para centralizar, de forma segura, la ubicación, el estado 
 
 ## Despliegue
 
-El servicio se ejecuta aislado con PM2 en `/root/monitoreo-relojes-adultos` y escucha únicamente en `127.0.0.1:3108`. Incluye un panel privado, actualización manual protegida y un ciclo de sincronización de solo lectura. Configura `/root/monitoreo-relojes-adultos/.env` desde [.env.example](.env.example) antes de publicarlo mediante un reverse proxy.
+El servicio se ejecuta aislado con PM2 en `/root/monitoreo-relojes-adultos` y publica el puerto dedicado `3108`, igual que el proyecto de referencia `Presupuestos_Ferreterias`. Incluye un panel privado, actualización manual protegida y un ciclo de sincronización de solo lectura. El acceso externo se realiza en `http://IP_DEL_VPS:3108/`; el contenido requiere las credenciales propias definidas en `/root/monitoreo-relojes-adultos/.env`.
 
 Cada `push` a `main` ejecuta [deploy.yml](.github/workflows/deploy.yml), usando los secrets `VPS_HOST`, `VPS_USER` y `SSH_PRIVATE_KEY`. En el primer despliegue el VPS clona el repositorio; por ello el repositorio debe permanecer público o el VPS debe contar con una credencial de lectura de GitHub.
 

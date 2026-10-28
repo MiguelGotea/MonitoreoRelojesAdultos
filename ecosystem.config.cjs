@@ -12,7 +12,9 @@ module.exports = {
       env: {
         NODE_ENV: "production",
         PORT: "3108",
-        HOST: "127.0.0.1"
+        // Igual que Presupuestos_Ferreterias: publica su puerto aislado en el VPS.
+        // El contenido sigue protegido con autenticación Basic del panel.
+        HOST: "0.0.0.0"
       },
       error_file: "/root/monitoreo-relojes-adultos/logs/error.log",
       out_file: "/root/monitoreo-relojes-adultos/logs/output.log",
