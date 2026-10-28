@@ -12,6 +12,10 @@ La carpeta `data/`, `logs/` y el archivo `.env` se mantienen exclusivamente en e
 
 El primer deploy crea `/root/monitoreo-relojes-adultos/.env` con permisos privados si aún no existe. Completa ahí `DASHBOARD_USER`, `DASHBOARD_PASSWORD` y las dos parejas `IGPS_*_ACCOUNT` / `IGPS_*_PASSWORD`; después reinicia el proceso con `pm2 restart monitoreo-relojes-adultos`. Nunca copies ese archivo al repositorio.
 
+## Publicar cambios
+
+Desde la raíz del proyecto, usa `\.scripts\gitpush.ps1 "mensaje del cambio"`. El script sincroniza `main`, resuelve el flujo de conflicto igual que `Herramientas_Personales` y hace el `push` que activa el despliegue. Incluye una protección para no enviar cuentas o claves en `.env.example`.
+
 ## Etapas
 
 1. **Validación de acceso y datos** — documentar el proveedor, la autenticación, las solicitudes de la aplicación y los datos realmente disponibles.
