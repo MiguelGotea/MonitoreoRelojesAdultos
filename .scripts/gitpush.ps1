@@ -1,9 +1,6 @@
 # PowerShell - Push rápido a GitHub (Monitoreo de relojes)
 # Uso: .\.scripts\gitpush.ps1 ["mensaje opcional"]
 
-# Mantiene salida legible en la consola de Windows.
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-
 # Auto-navegar a la raíz del proyecto.
 Set-Location (Split-Path $PSScriptRoot -Parent)
 
@@ -25,36 +22,41 @@ function Test-UnsafeEnvironmentTemplate {
     return $false
 }
 
-# Nunca versionar una cuenta ni clave real en la plantilla pública.
-if (Test-UnsafeEnvironmentTemplate) {
-    Write-Host "❌ Se detectaron posibles credenciales en .env.example. No se hará commit." -ForegroundColor Red
-    Write-Host "   Déjalas solamente en el archivo .env del VPS y restaura la plantilla antes de reintentar." -ForegroundColor Yellow
-    exit 1
+function Add-SafeChanges {
+    $unsafeTemplate = Test-UnsafeEnvironmentTemplate
+    git add .
+
+    # .env.example is intentionally versioned; only its secret-free template belongs in Git.
+    if ($unsafeTemplate) {
+        git restore --staged -- .env.example
+        Write-Host "NOTICE: .env.example contains possible credentials and was skipped." -ForegroundColor Yellow
+        Write-Host "Keep real values only in the ignored .env file on the VPS." -ForegroundColor Yellow
+    }
 }
 
-# Script Tanque v7, alineado con Herramientas_Personales.
-git add .
+# Script Tanque v7, aligned with Herramientas_Personales.
+Add-SafeChanges
 $msg = $args[0]
 if (-not $msg) { $msg = "MonitoreoRelojes Update $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" }
 
 git commit -m "$msg" 2>$null
 
-Write-Host "🚀 Intentando sincronizar y subir cambios a GitHub..." -ForegroundColor Cyan
+Write-Host "Attempting to synchronize and push changes to GitHub..." -ForegroundColor Cyan
 git pull origin main --rebase
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "⚠️ Conflicto detectado. Aplicando reparación de Hierro..." -ForegroundColor Yellow
+    Write-Host "Conflict detected. Applying safe recovery..." -ForegroundColor Yellow
     git rebase --abort 2>$null
     git pull origin main --no-rebase -X ours
-    git add .
+    Add-SafeChanges
     git commit -m "$msg (Conflict Resolved)" 2>$null
 }
 
 git push origin main
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "✅ ¡Subida completada con éxito! El despliegue automático comenzará ahora." -ForegroundColor Green
+    Write-Host "Push completed successfully. Automatic deployment will now begin." -ForegroundColor Green
 } else {
-    Write-Host "❌ Error en push." -ForegroundColor Red
+    Write-Host "Push failed." -ForegroundColor Red
     exit 1
 }

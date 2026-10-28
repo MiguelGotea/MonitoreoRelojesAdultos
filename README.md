@@ -14,7 +14,7 @@ El primer deploy crea `/root/monitoreo-relojes-adultos/.env` con permisos privad
 
 ## Publicar cambios
 
-Desde la raíz del proyecto, usa `\.scripts\gitpush.ps1 "mensaje del cambio"`. El script sincroniza `main`, resuelve el flujo de conflicto igual que `Herramientas_Personales` y hace el `push` que activa el despliegue. Incluye una protección para no enviar cuentas o claves en `.env.example`.
+Desde la raíz del proyecto, usa `\.scripts\gitpush.ps1 "mensaje del cambio"`. El script sincroniza `main`, resuelve el flujo de conflicto igual que `Herramientas_Personales` y hace el `push` que activa el despliegue. Si detecta valores que parecen secretos en `.env.example`, excluye solo ese archivo del commit y continúa; el archivo `.env` real ya está ignorado por Git.
 
 ## Etapas
 
