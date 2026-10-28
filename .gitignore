@@ -1,0 +1,13 @@
+# Never version credentials, device identifiers, session tokens, captures, or exports.
+.env
+.env.*
+!.env.example
+captures/
+exports/
+*.har
+*.apk
+data/
+logs/
+coverage/
+node_modules/
+

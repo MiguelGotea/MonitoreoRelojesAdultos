@@ -1,0 +1,54 @@
+name: Deploy Monitoreo Relojes Adultos
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-monitoreo-relojes-adultos-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Deploy isolated service through SSH
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            set -eu
+
+            APP_DIR="/root/monitoreo-relojes-adultos"
+            REPOSITORY="https://github.com/MiguelGotea/MonitoreoRelojesAdultos.git"
+
+            if [ ! -d "$APP_DIR/.git" ]; then
+              mkdir -p /root
+              git clone --branch main --single-branch "$REPOSITORY" "$APP_DIR"
+            fi
+
+            cd "$APP_DIR"
+            git fetch origin main
+            git checkout --force main
+            git reset --hard origin/main
+
+            mkdir -p logs data
+            npm ci --omit=dev
+
+            pm2 startOrRestart ecosystem.config.cjs --only monitoreo-relojes-adultos
+            pm2 save
+
+            node -e "require('http').get('http://127.0.0.1:3108/healthz', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"

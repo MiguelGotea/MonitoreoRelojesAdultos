@@ -1,0 +1,13 @@
+{
+  "name": "monitoreo-relojes-adultos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Panel privado para centralizar el monitoreo de relojes de adultos mayores.",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
