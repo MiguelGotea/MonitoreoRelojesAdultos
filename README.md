@@ -4,11 +4,13 @@ Proyecto por etapas para centralizar, de forma segura, la ubicación, el estado 
 
 ## Despliegue
 
-El servicio se ejecuta aislado con PM2 en `/root/monitoreo-relojes-adultos` y escucha únicamente en `127.0.0.1:3108`. El reverse proxy y el control de acceso se incorporarán antes de publicar cualquier telemetría.
+El servicio se ejecuta aislado con PM2 en `/root/monitoreo-relojes-adultos` y escucha únicamente en `127.0.0.1:3108`. Incluye un panel privado, actualización manual protegida y un ciclo de sincronización de solo lectura. Configura `/root/monitoreo-relojes-adultos/.env` desde [.env.example](.env.example) antes de publicarlo mediante un reverse proxy.
 
 Cada `push` a `main` ejecuta [deploy.yml](.github/workflows/deploy.yml), usando los secrets `VPS_HOST`, `VPS_USER` y `SSH_PRIVATE_KEY`. En el primer despliegue el VPS clona el repositorio; por ello el repositorio debe permanecer público o el VPS debe contar con una credencial de lectura de GitHub.
 
-La carpeta `data/`, `logs/` y el archivo `.env` se mantienen exclusivamente en el VPS y están excluidos de Git.
+La carpeta `data/`, `logs/` y el archivo `.env` se mantienen exclusivamente en el VPS y están excluidos de Git. El panel rechaza todo acceso hasta que su usuario y contraseña propios estén configurados.
+
+El primer deploy crea `/root/monitoreo-relojes-adultos/.env` con permisos privados si aún no existe. Completa ahí `DASHBOARD_USER`, `DASHBOARD_PASSWORD` y las dos parejas `IGPS_*_ACCOUNT` / `IGPS_*_PASSWORD`; después reinicia el proceso con `pm2 restart monitoreo-relojes-adultos`. Nunca copies ese archivo al repositorio.
 
 ## Etapas
 

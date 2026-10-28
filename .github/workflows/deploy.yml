@@ -46,6 +46,11 @@ jobs:
             git reset --hard origin/main
 
             mkdir -p logs data
+            if [ ! -f .env ]; then
+              cp .env.example .env
+              chmod 600 .env
+              echo "Created .env from .env.example; configure it on the VPS before enabling telemetry."
+            fi
             npm ci --omit=dev
 
             pm2 startOrRestart ecosystem.config.cjs --only monitoreo-relojes-adultos
