@@ -42,12 +42,12 @@ if (-not $msg) { $msg = "MonitoreoRelojes Update $(Get-Date -Format 'yyyy-MM-dd 
 git commit -m "$msg" 2>$null
 
 Write-Host "Attempting to synchronize and push changes to GitHub..." -ForegroundColor Cyan
-git pull origin main --rebase
+git pull origin main --rebase --autostash
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Conflict detected. Applying safe recovery..." -ForegroundColor Yellow
     git rebase --abort 2>$null
-    git pull origin main --no-rebase -X ours
+    git pull origin main --no-rebase -X ours --autostash
     Add-SafeChanges
     git commit -m "$msg (Conflict Resolved)" 2>$null
 }
