@@ -20,11 +20,13 @@ Desde la raíz del proyecto, usa `\.scripts\gitpush.ps1 "mensaje del cambio"`. E
 
 1. **Etapa 1 — Validación:** completada. Se confirmó el proveedor, el contrato de lectura y los datos de ubicación disponibles. Ver [FASE_1.md](docs/FASE_1.md).
 2. **Etapa 2 — Servicio web:** completada. Ambos relojes se centralizan mediante cuentas independientes y se muestran en un panel protegido desplegado en el VPS. Ver [ETAPA_2.md](docs/ETAPA_2.md).
-3. **Etapa 3 — Aplicación para reloj:** queda aplazada como trabajo futuro. Se evaluará por separado cuando se definan plataforma, alcance y requisitos de seguridad.
+3. **Etapa 2.1 — Mapa y telemetría ampliada:** completada. El panel incorpora mapa, recorrido temporal por sesión, geocodificación inversa y una pestaña de salud con los datos actualmente confirmados. Ver [ETAPA_2.md](docs/ETAPA_2.md).
+4. **Etapa 3 — Aplicación para reloj:** queda aplazada como trabajo futuro. Se evaluará por separado cuando se definan plataforma, alcance y requisitos de seguridad.
 
 ## Seguridad
 
 - Las credenciales, teléfonos, IMEI, enlaces con tokens, cookies y ubicaciones precisas no se deben incluir en el código, documentación versionada ni capturas compartidas.
 - Las variables de entorno reales permanecen exclusivamente en el VPS.
 - El panel requiere autenticación. Actualmente se publica por HTTP en un puerto dedicado; antes de ampliar su uso debe migrarse a un dominio con HTTPS.
+- El mapa usa teselas públicas de OpenStreetMap y la dirección se resuelve con Nominatim por defecto. Esto comunica las coordenadas al proveedor de geocodificación; puede deshabilitarse con `GEOCODING_ENABLED=false`.
 
